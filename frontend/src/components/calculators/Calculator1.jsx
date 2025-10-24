@@ -12,7 +12,7 @@ import { Download, Calculator, RefreshCcw, TrendingUp, Wallet } from "lucide-rea
 import EmployeeManager from "./EmployeeManager";
 
 /**
- * DeepGrid Payroll Calculator — Annual ↔ Monthly
+ * CompWise-CTC Payroll Calculator — Annual ↔ Monthly
  * ----------------------------------------------
  * New in this version:
  *  • Enter **Annual Gross (cash)** OR **Monthly Gross** and the app computes both monthly & annual
@@ -72,9 +72,7 @@ const defaultPolicy = {
 
 // Offer presets (optional quick‑fill)
 const defaultPresets = [
-  { name: "Snigdha Mohapatra", gross: 40000, fixed: { conveyance: 1600, medical: 1250, lunch: 1150 } },
-  { name: "Pulicharla Gopi Krishna", gross: 30000, fixed: { conveyance: 1300, medical: 1200, lunch: 1500 } },
-  { name: "Arun Saathappan", gross: 83332, fixed: { conveyance: 1600, medical: 1250, lunch: 2200 } },
+  { name: "Pulicharla Gopi Krishna", gross: 30000, fixed: { conveyance: 1300, medical: 1200, lunch: 1500 } }
 ];
 
 // Compute income tax on annual taxable income using slabs
@@ -247,7 +245,7 @@ export default function PayrollCalculator() {
         { salary_component: "Lunch Allowance", amount: fixed.lunch },
       ],
       deductions: [ { salary_component: "Income Tax (TDS)", amount: 0 } ],
-      notes: "Auto-generated from DeepGrid Payroll Calculator (full-month amounts). TDS/PF/ESI/PT computed at Salary Slip time.",
+      notes: "Auto-generated from CompWise-CTC Payroll Calculator (full-month amounts). TDS/PF/ESI/PT computed at Salary Slip time.",
     };
     downloadJSON(payload, `salary_assignment_${(employee||'employee').replaceAll(' ', '_')}.json`);
   };

@@ -3,13 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { UserPlus, Trash2, Users } from 'lucide-react';
 
 const EmployeeManager = ({ presets, setPresets }) => {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [inputMode, setInputMode] = useState('monthly');
   const [newEmployee, setNewEmployee] = useState({
     name: '',
-    gross: 40000,
+    monthlyGross: 40000,
+    annualGross: 480000,
     conveyance: 1600,
     medical: 1250,
     lunch: 1150,
@@ -20,11 +23,16 @@ const EmployeeManager = ({ presets, setPresets }) => {
       alert('Please enter employee name');
       return;
     }
+    
+    const grossAmount = inputMode === 'monthly' 
+      ? parseFloat(newEmployee.monthlyGross) || 0
+      : parseFloat(newEmployee.annualGross) / 12 || 0;
+    
     setPresets([
       ...presets,
       {
         name: newEmployee.name,
-        gross: parseFloat(newEmployee.gross) || 0,
+        gross: grossAmount,
         fixed: {
           conveyance: parseFloat(newEmployee.conveyance) || 0,
           medical: parseFloat(newEmployee.medical) || 0,
@@ -34,12 +42,31 @@ const EmployeeManager = ({ presets, setPresets }) => {
     ]);
     setNewEmployee({
       name: '',
-      gross: 40000,
+      monthlyGross: 40000,
+      annualGross: 480000,
       conveyance: 1600,
       medical: 1250,
       lunch: 1150,
     });
     setShowAddForm(false);
+  };
+
+  const handleMonthlyChange = (value) => {
+    const monthly = parseFloat(value) || 0;
+    setNewEmployee({
+      ...newEmployee,
+      monthlyGross: monthly,
+      annualGross: monthly * 12,
+    });
+  };
+
+  const handleAnnualChange = (value) => {
+    const annual = parseFloat(value) || 0;
+    setNewEmployee({
+      ...newEmployee,
+      annualGross: annual,
+      monthlyGross: annual / 12,
+    });
   };
 
   const removeEmployee = (name) => {
@@ -49,28 +76,28 @@ const EmployeeManager = ({ presets, setPresets }) => {
   };
 
   return (
-    <Card className="shadow-sm border-purple-200 dark:border-purple-800">
-      <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
-        <CardTitle className="flex items-center justify-between text-lg">
+    <Card className="shadow-lg border-purple-200 dark:border-purple-800">
+      <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-600 text-white">
+        <CardTitle className="text-base flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+            <Users className="h-5 w-5" />
             <span>Manage Employees</span>
           </div>
           <Button
             onClick={() => setShowAddForm(!showAddForm)}
             size="sm"
-            className="bg-purple-600 hover:bg-purple-700"
+            variant="secondary"
           >
             <UserPlus className="h-4 w-4 mr-1" />
-            Add Employee
+            Add
           </Button>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
         {showAddForm && (
           <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <div className="col-span-2">
+            <div className="space-y-3">
+              <div>
                 <Label>Employee Name</Label>
                 <Input
                   value={newEmployee.name}
@@ -81,66 +108,101 @@ const EmployeeManager = ({ presets, setPresets }) => {
                   className="mt-1"
                 />
               </div>
+              
               <div>
-                <Label>Monthly Gross (₹)</Label>
-                <Input
-                  type="number"
-                  value={newEmployee.gross}
-                  onChange={(e) =>
-                    setNewEmployee({
-                      ...newEmployee,
-                      gross: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  className="mt-1"
-                />
+                <Label>Salary Input Mode</Label>
+                <RadioGroup 
+                  className="mt-2 grid grid-cols-2 gap-2" 
+                  value={inputMode} 
+                  onValueChange={setInputMode}
+                >
+                  <div className="flex items-center space-x-2 border-2 border-purple-300 dark:border-purple-700 rounded-lg p-2">
+                    <RadioGroupItem value="monthly" id="emp-monthly" />
+                    <Label htmlFor="emp-monthly">Monthly</Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border-2 border-purple-300 dark:border-purple-700 rounded-lg p-2">
+                    <RadioGroupItem value="annual" id="emp-annual" />
+                    <Label htmlFor="emp-annual">Annual</Label>
+                  </div>
+                </RadioGroup>
               </div>
-              <div>
-                <Label>Conveyance (₹)</Label>
-                <Input
-                  type="number"
-                  value={newEmployee.conveyance}
-                  onChange={(e) =>
-                    setNewEmployee({
-                      ...newEmployee,
-                      conveyance: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label>Medical (₹)</Label>
-                <Input
-                  type="number"
-                  value={newEmployee.medical}
-                  onChange={(e) =>
-                    setNewEmployee({
-                      ...newEmployee,
-                      medical: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label>Lunch (₹)</Label>
-                <Input
-                  type="number"
-                  value={newEmployee.lunch}
-                  onChange={(e) =>
-                    setNewEmployee({
-                      ...newEmployee,
-                      lunch: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  className="mt-1"
-                />
+
+              {inputMode === 'monthly' ? (
+                <div>
+                  <Label>Monthly Gross (₹)</Label>
+                  <Input
+                    type="number"
+                    value={newEmployee.monthlyGross}
+                    onChange={(e) => handleMonthlyChange(e.target.value)}
+                    className="mt-1"
+                  />
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Annual: ₹{Math.round(newEmployee.annualGross).toLocaleString('en-IN')}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <Label>Annual Gross (₹)</Label>
+                  <Input
+                    type="number"
+                    value={newEmployee.annualGross}
+                    onChange={(e) => handleAnnualChange(e.target.value)}
+                    className="mt-1"
+                  />
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Monthly: ₹{Math.round(newEmployee.monthlyGross).toLocaleString('en-IN')}
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <Label className="text-xs">Conveyance</Label>
+                  <Input
+                    type="number"
+                    value={newEmployee.conveyance}
+                    onChange={(e) =>
+                      setNewEmployee({
+                        ...newEmployee,
+                        conveyance: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Medical</Label>
+                  <Input
+                    type="number"
+                    value={newEmployee.medical}
+                    onChange={(e) =>
+                      setNewEmployee({
+                        ...newEmployee,
+                        medical: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Lunch</Label>
+                  <Input
+                    type="number"
+                    value={newEmployee.lunch}
+                    onChange={(e) =>
+                      setNewEmployee({
+                        ...newEmployee,
+                        lunch: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    className="mt-1"
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 mt-3">
               <Button onClick={addEmployee} className="flex-1 bg-green-600 hover:bg-green-700">
-                Add
+                Add Employee
               </Button>
               <Button
                 onClick={() => setShowAddForm(false)}
@@ -156,7 +218,7 @@ const EmployeeManager = ({ presets, setPresets }) => {
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {presets.length === 0 ? (
             <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-4">
-              No employees added yet. Click "Add Employee" to get started.
+              No employees added yet. Click "Add" to get started.
             </p>
           ) : (
             presets.map((preset) => (
@@ -169,7 +231,7 @@ const EmployeeManager = ({ presets, setPresets }) => {
                     {preset.name}
                   </div>
                   <div className="text-xs text-slate-600 dark:text-slate-400">
-                    Gross: ₹{preset.gross.toLocaleString('en-IN')}
+                    Monthly: ₹{preset.gross.toLocaleString('en-IN')} | Annual: ₹{(preset.gross * 12).toLocaleString('en-IN')}
                   </div>
                 </div>
                 <Button

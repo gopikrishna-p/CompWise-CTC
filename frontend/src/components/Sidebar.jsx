@@ -37,7 +37,7 @@ const Sidebar = ({ isOpen, setIsOpen, selectedCalculator, setSelectedCalculator 
                   <Calculator className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold text-slate-900 dark:text-white">DeepGrid</h1>
+                  <h1 className="text-lg font-bold text-slate-900 dark:text-white">CompWise-CTC</h1>
                   <p className="text-xs text-slate-500 dark:text-slate-400">Payroll System</p>
                 </div>
               </div>

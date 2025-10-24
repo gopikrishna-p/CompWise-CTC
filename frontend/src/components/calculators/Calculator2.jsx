@@ -68,9 +68,7 @@ const defaultPolicy = {
 
 // Default presets
 const defaultPresets = [
-  { name: "Snigdha Mohapatra", gross: 40000, fixed: { conveyance: 1600, medical: 1250, lunch: 1150 } },
   { name: "Pulicharla Gopi Krishna", gross: 30000, fixed: { conveyance: 1300, medical: 1200, lunch: 1500 } },
-  { name: "Arun Saathappan", gross: 83332, fixed: { conveyance: 1600, medical: 1250, lunch: 2200 } },
 ];
 
 // ---------- Core calculations (pure) ----------
@@ -278,7 +276,7 @@ export default function PayrollCalculator() {
         { salary_component: "Lunch Allowance", amount: fixed.lunch },
       ],
       deductions: [ { salary_component: "Income Tax (TDS)", amount: 0 } ],
-      notes: "Auto-generated from DeepGrid Payroll Calculator.",
+      notes: "Auto-generated from CompWise-CTC Payroll Calculator.",
     };
     const safeName = (employee||"employee").replace(/\s+/g, "_");
     downloadJSON(payload, `salary_assignment_${safeName}.json`);
